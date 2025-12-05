@@ -143,6 +143,18 @@ const LessonScreen = () => {
               style={styles.actionItem}
               onPress={() => {
                 setActionModalVisible(false);
+                navigation.navigate('EditLessonScreen', {
+                  lessonId: selectedLessonId,
+                });
+              }}
+            >
+              <Text style={styles.actionText}>Edit Lesson Detail</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionItem}
+              onPress={() => {
+                setActionModalVisible(false);
                 navigation.navigate('AddLessonDetailScreen', {
                   lessonId: selectedLessonId,
                 });

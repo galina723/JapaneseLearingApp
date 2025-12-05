@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { FAB, Portal } from 'react-native-paper';
 
 interface Quiz {
   quizId: number;
@@ -34,7 +35,7 @@ const QuizScreen = () => {
       const token = await AsyncStorage.getItem('token');
 
       const res = await axios.get(
-        `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/quizzes/lesson/${lessonId}`,
+        `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/lessons/${lessonId}/quizzes`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -63,7 +64,8 @@ const QuizScreen = () => {
   };
 
   useEffect(() => {
-    loadQuizzes();
+    const unsubscribe = navigation.addListener('focus', loadQuizzes);
+    return unsubscribe;
   }, []);
 
   if (loading) {
@@ -75,57 +77,74 @@ const QuizScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Quizzes</Text>
+    <>
+      <ScrollView style={styles.container}>
+        <Text style={styles.header}>Quizzes</Text>
 
-      {quizzes.length === 0 && <Text>No quizzes found.</Text>}
+        {quizzes.length === 0 && <Text>No quizzes found.</Text>}
 
-      {quizzes.map(q => (
-        <View key={q.quizId} style={styles.card}>
-          <TouchableOpacity
-            style={{ flex: 1 }}
-            onPress={() =>
-              navigation.navigate('QuizDetailScreen', { quizId: q.quizId })
-            }
-          >
-            <Text style={styles.title}>{q.title}</Text>
-            <Text style={styles.time}>Time Limit: {q.timeLimit}s</Text>
-          </TouchableOpacity>
+        {quizzes.map(q => (
+          <View key={q.quizId} style={styles.card}>
+            <TouchableOpacity
+              style={{ flex: 1 }}
+              onPress={() =>
+                navigation.navigate('QuestionScreen', {
+                  quizId: q.quizId,
+                })
+              }
+            >
+              <Text style={styles.title}>{q.title}</Text>
+              <Text style={styles.time}>Time Limit: {q.timeLimit}s</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            onPress={() => {
-              setSelectedQuizId(q.quizId);
-              setDeleteModal(true);
-            }}
-          >
-            <Text style={{ color: 'white' }}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+            <TouchableOpacity
+              style={[styles.deleteBtn, { backgroundColor: 'orange' }]}
+              onPress={() => {
+                navigation.navigate('EditQuizScreen', { quizId: q.quizId });
+              }}
+            >
+              <Text style={{ color: 'white' }}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => {
+                setSelectedQuizId(q.quizId);
+                setDeleteModal(true);
+              }}
+            >
+              <Text style={{ color: 'white' }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
 
-      {/* DELETE MODAL */}
-      <Modal visible={deleteModal} transparent animationType="fade">
-        <View style={styles.modalBg}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalText}>Delete this quiz?</Text>
+        {/* DELETE MODAL */}
+        <Modal visible={deleteModal} transparent animationType="fade">
+          <View style={styles.modalBg}>
+            <View style={styles.modalCard}>
+              <Text style={styles.modalText}>Delete this quiz?</Text>
 
-            <View style={styles.rowBtns}>
-              <TouchableOpacity
-                style={styles.cancelBtn}
-                onPress={() => setDeleteModal(false)}
-              >
-                <Text>Cancel</Text>
-              </TouchableOpacity>
+              <View style={styles.rowBtns}>
+                <TouchableOpacity
+                  style={styles.cancelBtn}
+                  onPress={() => setDeleteModal(false)}
+                >
+                  <Text>Cancel</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity style={styles.okBtn} onPress={deleteQuiz}>
-                <Text style={{ color: '#FFF' }}>Delete</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.okBtn} onPress={deleteQuiz}>
+                  <Text style={{ color: '#FFF' }}>Delete</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </ScrollView>
+        </Modal>
+      </ScrollView>
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() => navigation.navigate('AddQuizScreen', { lessonId })}
+      />
+    </>
   );
 };
 
@@ -152,6 +171,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: 10,
   },
+
+  fab: { position: 'absolute', bottom: 20, right: 20 },
 
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 

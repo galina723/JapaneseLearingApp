@@ -1,8 +1,6 @@
-import { View, Text } from 'react-native';
 import React from 'react';
 import DashboardScreen from '../../screens/onlyforadmin/DashboardScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import UserScreen from '../../screens/onlyforadmin/user/UserScreen';
 import UserNavigation from './UserNavigation';
 import LessonNavigation from './LessonNavigation';
 import QuizNavigation from './QuizNavigation';

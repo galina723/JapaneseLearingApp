@@ -3,7 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Screen } from 'react-native-screens';
 import QuizScreen from '../../screens/quiz/QuizScreen';
-import QuizDetailScreen from '../../screens/onlyforadmin/quiz/QuizDetailScreen';
+import QuizDetailScreen from '../../screens/onlyforadmin/quiz/question/QuestionScreen';
 import AddQuizScreen from '../../screens/onlyforadmin/quiz/AddQuizScreen';
 import EditQuizScreen from '../../screens/onlyforadmin/quiz/EditQuizScreen';
 

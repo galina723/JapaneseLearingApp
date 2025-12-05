@@ -12,7 +12,7 @@ import {
   Alert,
 } from 'react-native';
 
-const AddLessonDetailScreen = () => {
+const EditLessonDetailScreen = () => {
   const navigation: any = useNavigation();
   const route = useRoute<any>();
   const { lessonId } = route.params;
@@ -97,7 +97,7 @@ const AddLessonDetailScreen = () => {
   );
 };
 
-export default AddLessonDetailScreen;
+export default EditLessonDetailScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#FFF' },

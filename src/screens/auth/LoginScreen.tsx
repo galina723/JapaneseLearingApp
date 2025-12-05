@@ -1,0 +1,246 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+  KeyboardAvoidingView,
+  Alert,
+} from 'react-native';
+
+import LinearGradient from 'react-native-linear-gradient';
+import { TextInput } from 'react-native-paper';
+import { LoginRequest } from '../../models/User';
+
+const COLORS = {
+  gradientStart: '#203061',
+  gradientEnd: '#F7BFD8',
+  inputBackground: '#FFFFFF',
+  buttonPrimary: '#57487F',
+  buttonText: '#FFFFFF',
+  textLight: '#FFFFFF',
+  linkAccent: '#F880B0',
+};
+
+const LoginScreen = ({}) => {
+  const navigation: any = useNavigation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
+
+  const checkLogin = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const user = await AsyncStorage.getItem('user');
+    if (token && user) {
+      const userT = JSON.parse(user);
+      if (userT.role.roleId == 1) {
+        console.log(212121212345);
+        navigation.navigate('DashboardNavigator');
+      } else {
+        console.log(11111119765);
+
+        navigation.navigate('HomeScreen');
+      }
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(
+        'https://lumbar-mora-uncoroneted.ngrok-free.dev/api/auth/login',
+        {
+          username: username,
+          password: password,
+        },
+      );
+
+      console.log(res, res.data.user.role.roleId == 1);
+      if (res.status == 200) {
+        const token = res.data.token;
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('user', JSON.stringify(res.data.user));
+        if (res.data.user.role.roleId == 1) {
+          console.log(12345);
+          navigation.navigate('DashboardNavigator');
+        } else {
+          console.log(9765);
+
+          navigation.navigate('HomeScreen');
+        }
+      } else {
+        Alert.alert('Login Failed');
+        return;
+      }
+    } catch (err) {
+      Alert.alert('Login Fail');
+      return;
+    }
+  };
+
+  return (
+    <LinearGradient
+      colors={[COLORS.gradientStart, COLORS.gradientEnd]}
+      style={styles.container}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
+
+      <KeyboardAvoidingView style={styles.contentContainer} behavior="padding">
+        <Text style={styles.logoText}>JapanWise</Text>
+        <Text style={styles.welcomeText}>Welcome back!</Text>
+
+        {/* Username */}
+        <View style={styles.inputCard}>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#A0A0A0"
+            autoCapitalize="none"
+            value={username}
+            onChangeText={setUsername}
+            mode="outlined"
+          />
+        </View>
+
+        {/* Password */}
+        <View style={styles.inputCard}>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#A0A0A0"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
+            mode="outlined"
+          />
+        </View>
+
+        {/* Login Button */}
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => {
+            handleLogin();
+          }}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? 'Loading...' : 'Login'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Register */}
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Don't have an account? </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('RegisterScreen')}
+          >
+            <Text
+              style={[
+                styles.linkText,
+                {
+                  color: COLORS.gradientStart,
+                  fontWeight: 'bold',
+                  textDecorationLine: 'none',
+                },
+              ]}
+            >
+              Sign up now
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
+  );
+};
+
+export default LoginScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    paddingTop: 50,
+  },
+
+  logoText: {
+    fontSize: 38,
+    fontWeight: '900',
+    color: COLORS.textLight,
+    marginBottom: 5,
+  },
+
+  welcomeText: {
+    fontSize: 18,
+    color: COLORS.textLight,
+    marginBottom: 50,
+  },
+
+  inputCard: {
+    width: '100%',
+    maxWidth: 350,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: COLORS.linkAccent,
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+
+  input: {
+    fontSize: 18,
+    color: '#333',
+    borderWidth: 0,
+    backgroundColor: COLORS.inputBackground,
+    borderRadius: 12,
+  },
+
+  loginButton: {
+    width: '100%',
+    maxWidth: 350,
+    backgroundColor: COLORS.buttonPrimary,
+    padding: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 20,
+  },
+
+  buttonText: {
+    color: COLORS.buttonText,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  linkText: {
+    color: COLORS.textLight,
+    textDecorationLine: 'underline',
+  },
+
+  registerContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+
+  registerText: {
+    color: COLORS.textLight,
+  },
+});

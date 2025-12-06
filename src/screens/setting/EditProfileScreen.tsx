@@ -8,8 +8,10 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const UpdateProfileScreen = () => {
+  const navigation: any = useNavigation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [fullname, setFullname] = useState('');
@@ -25,10 +27,10 @@ const UpdateProfileScreen = () => {
     );
 
     if (res.status === 200) {
-      const data = res.data.data; // BE trả về field "data"
+      const data = res.data.data;
       setUsername(data.username);
       setEmail(data.email);
-      setFullname(data.fullName); // nhớ đúng case nha
+      setFullname(data.fullname);
     }
   };
 
@@ -36,22 +38,14 @@ const UpdateProfileScreen = () => {
     const token = await AsyncStorage.getItem('token');
 
     try {
-      const res = await axios.post(
+      const res = await axios.put(
         'https://lumbar-mora-uncoroneted.ngrok-free.dev/api/users/profile',
-        {
-          fullName: fullname, // backend CHỈ NHẬN field NÀY
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { fullname },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-
-      if (res.status === 200) {
-        //alert('Cập nhật thành công!');
-      }
+      navigation.navigate('ProfileScreen');
     } catch (err: any) {
       console.log(err.response?.data);
-      //alert('Update failed!');
     }
   };
 
@@ -61,32 +55,36 @@ const UpdateProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Update Profile</Text>
+      <Text style={styles.headerTitle}>Edit Profile</Text>
 
-      <Text style={styles.label}>Username</Text>
-      <TextInput
-        style={[styles.input, styles.disabled]}
-        value={username}
-        editable={false} // ❌ không cho sửa
-      />
+      <View style={styles.card}>
+        <Text style={styles.label}>Username</Text>
+        <TextInput
+          style={[styles.input, styles.disabled]}
+          value={username}
+          editable={false}
+        />
 
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={[styles.input, styles.disabled]}
-        value={email}
-        editable={false} // ❌ không cho sửa
-      />
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={[styles.input, styles.disabled]}
+          value={email}
+          editable={false}
+        />
 
-      <Text style={styles.label}>Fullname</Text>
-      <TextInput
-        style={styles.input}
-        value={fullname}
-        onChangeText={setFullname}
-      />
+        <Text style={styles.label}>Fullname</Text>
+        <TextInput
+          style={styles.input}
+          value={fullname}
+          onChangeText={setFullname}
+          placeholder="Enter your fullname"
+          placeholderTextColor="#999"
+        />
 
-      <TouchableOpacity style={styles.btn} onPress={updateProfile}>
-        <Text style={styles.btnText}>Save</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.btn} onPress={updateProfile}>
+          <Text style={styles.btnText}>Save Changes</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -96,39 +94,58 @@ export default UpdateProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#FFF',
+    padding: 20,
+    backgroundColor: '#203061',
   },
-  title: {
-    fontSize: 22,
+
+  headerTitle: {
+    fontSize: 26,
     fontWeight: '700',
-    marginBottom: 16,
+    color: '#f4deeb',
+    marginBottom: 20,
+    alignSelf: 'center',
   },
+
+  card: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 18,
+    elevation: 6,
+  },
+
   label: {
     marginTop: 12,
-    fontWeight: '600',
+    fontWeight: '700',
+    color: '#203061',
+    fontSize: 14,
   },
+
   input: {
     borderWidth: 1,
-    borderColor: '#DDD',
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 4,
+    borderColor: '#c8c8c8',
+    padding: 12,
+    borderRadius: 12,
+    marginTop: 6,
+    fontSize: 15,
+    color: '#333',
   },
+
   disabled: {
-    backgroundColor: '#EEE',
+    backgroundColor: '#eee',
     color: '#666',
   },
+
   btn: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: '#8A6FD6',
     padding: 14,
-    marginTop: 24,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: 'center',
+    marginTop: 26,
   },
+
   btnText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#ffffff',
+    fontSize: 17,
+    fontWeight: '700',
   },
 });

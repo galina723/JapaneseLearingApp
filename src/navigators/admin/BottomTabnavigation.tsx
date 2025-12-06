@@ -26,7 +26,7 @@ const AdminBottomTabnavigation = () => {
         options={{
           tabBarLabel: 'User',
           tabBarIcon: () => {
-            return <Icon size={24} source="home" />;
+            return <Icon size={24} source="human-queue" />;
           },
         }}
       />
@@ -36,17 +36,7 @@ const AdminBottomTabnavigation = () => {
         options={{
           tabBarLabel: 'Lesson',
           tabBarIcon: () => {
-            return <Icon size={24} source="home" />;
-          },
-        }}
-      />
-      <Tab.Screen
-        name="QuizScreen"
-        component={QuizNavigation}
-        options={{
-          tabBarLabel: 'Quiz',
-          tabBarIcon: () => {
-            return <Icon size={24} source="home" />;
+            return <Icon size={24} source="book" />;
           },
         }}
       />

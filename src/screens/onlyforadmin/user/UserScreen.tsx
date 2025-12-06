@@ -43,15 +43,15 @@ const UserScreen = () => {
   const mapStatus = (x: number): UserStatus => {
     switch (x) {
       case 0:
-        return UserStatus.Inactive;
-      case 1:
         return UserStatus.Active;
+      case 1:
+        return UserStatus.Inactive;
       case 2:
         return UserStatus.Blocked;
       case 3:
         return UserStatus.Pending;
       default:
-        return UserStatus.Inactive;
+        return UserStatus.Active;
     }
   };
 
@@ -92,7 +92,7 @@ const UserScreen = () => {
       await axios.post(
         `${API}/change-status`,
         {
-          userId: selectedUser.username,
+          username: selectedUser.username,
           newStatus: selectedStatus,
         },
         {

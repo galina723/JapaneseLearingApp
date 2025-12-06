@@ -14,7 +14,6 @@ import {
 
 import LinearGradient from 'react-native-linear-gradient';
 import { TextInput } from 'react-native-paper';
-import { LoginRequest } from '../../models/User';
 
 const COLORS = {
   gradientStart: '#203061',
@@ -41,14 +40,8 @@ const LoginScreen = ({}) => {
     const user = await AsyncStorage.getItem('user');
     if (token && user) {
       const userT = JSON.parse(user);
-      if (userT.role.roleId == 1) {
-        console.log(212121212345);
-        navigation.navigate('DashboardNavigator');
-      } else {
-        console.log(11111119765);
-
-        navigation.navigate('HomeScreen');
-      }
+      if (userT.role.roleId == 1) navigation.navigate('DashboardNavigator');
+      else navigation.navigate('HomeScreen');
     }
   };
 
@@ -62,26 +55,25 @@ const LoginScreen = ({}) => {
         },
       );
 
-      console.log(res, res.data.user.role.roleId == 1);
       if (res.status == 200) {
         const token = res.data.token;
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('user', JSON.stringify(res.data.user));
-        if (res.data.user.role.roleId == 1) {
-          console.log(12345);
+        console.log(res.data);
+        if (res.data.user.role.roleId == 1)
           navigation.navigate('DashboardNavigator');
-        } else {
-          console.log(9765);
-
-          navigation.navigate('HomeScreen');
+        else {
+          if (res.data.user.status == 0) {
+            navigation.navigate('HomeScreen');
+          } else {
+            Alert.alert('Login Failed', 'Your account is not active yet.');
+          }
         }
       } else {
         Alert.alert('Login Failed');
-        return;
       }
     } catch (err) {
       Alert.alert('Login Fail');
-      return;
     }
   };
 
@@ -128,12 +120,27 @@ const LoginScreen = ({}) => {
           />
         </View>
 
+        {/* 🔥 Forgot Password */}
+        <TouchableOpacity
+          style={{ width: '100%', maxWidth: 350, alignItems: 'flex-end' }}
+          onPress={() => navigation.navigate('EmailForgetScreen')}
+        >
+          <Text
+            style={{
+              color: COLORS.textLight,
+              fontSize: 14,
+              marginBottom: 10,
+              textDecorationLine: 'underline',
+            }}
+          >
+            Forgot Password?
+          </Text>
+        </TouchableOpacity>
+
         {/* Login Button */}
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => {
-            handleLogin();
-          }}
+          onPress={handleLogin}
           disabled={loading}
         >
           <Text style={styles.buttonText}>
@@ -172,28 +179,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 50,
   },
-
   logoText: {
     fontSize: 38,
     fontWeight: '900',
     color: COLORS.textLight,
     marginBottom: 5,
   },
-
   welcomeText: {
     fontSize: 18,
     color: COLORS.textLight,
     marginBottom: 50,
   },
-
   inputCard: {
     width: '100%',
     maxWidth: 350,
@@ -204,15 +206,12 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 4,
   },
-
   input: {
     fontSize: 18,
     color: '#333',
-    borderWidth: 0,
     backgroundColor: COLORS.inputBackground,
     borderRadius: 12,
   },
-
   loginButton: {
     width: '100%',
     maxWidth: 350,
@@ -223,24 +222,20 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 20,
   },
-
   buttonText: {
     color: COLORS.buttonText,
     fontSize: 18,
     fontWeight: 'bold',
   },
-
-  linkText: {
-    color: COLORS.textLight,
-    textDecorationLine: 'underline',
-  },
-
   registerContainer: {
     flexDirection: 'row',
     marginTop: 20,
   },
-
   registerText: {
     color: COLORS.textLight,
+  },
+  linkText: {
+    color: COLORS.textLight,
+    textDecorationLine: 'underline',
   },
 });

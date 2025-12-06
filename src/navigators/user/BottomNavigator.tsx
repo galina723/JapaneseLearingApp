@@ -33,7 +33,7 @@ const BottomNavigator = () => {
         options={{
           tabBarLabel: 'Video',
           tabBarIcon: () => {
-            return <Icon size={24} source="bell" />;
+            return <Icon size={24} source="video" />;
           },
         }}
       />
@@ -43,7 +43,7 @@ const BottomNavigator = () => {
         options={{
           tabBarLabel: 'Rank',
           tabBarIcon: () => {
-            return <Icon size={24} source="home" />;
+            return <Icon size={24} source="format-wrap-top-bottom" />;
           },
         }}
       />
@@ -53,7 +53,7 @@ const BottomNavigator = () => {
         options={{
           tabBarLabel: 'Setting',
           tabBarIcon: () => {
-            return <Icon size={24} source="bell" />;
+            return <Icon size={24} source="account-settings" />;
           },
         }}
       />

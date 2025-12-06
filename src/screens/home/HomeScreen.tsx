@@ -9,6 +9,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
+import { WebView } from 'react-native-webview';
 
 import {
   CurrentweatherModel,
@@ -22,7 +24,11 @@ const HomeScreen = () => {
   const [weather, setWeather] = useState<CurrentweatherModel | null>(null);
   const [location, setLocation] = useState<LocationWeatherModel | null>(null);
 
-  const [xp, setXp] = useState(0); // ⭐ ADD XP STATE
+  const [xp, setXp] = useState(0);
+
+  // ⭐ Modal + Video
+  const [showVideo, setShowVideo] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
 
   const loadWeather = async () => {
     try {
@@ -46,115 +52,175 @@ const HomeScreen = () => {
     loadWeather();
     loadXP();
 
-    // 📌 Khi quay lại Home sau khi làm Quiz → reload XP
     const focus = navigation.addListener('focus', () => loadXP());
     return focus;
   }, []);
 
+  // ⭐ DATA (History + Culture video)
+  const historyData = [
+    {
+      id: 1,
+      title: 'History',
+      image: require('../../assets/science1.png'),
+      url: 'https://www.youtube.com/watch?v=uQX8UwV87Os',
+    },
+    {
+      id: 2,
+      title: 'Landscape',
+      image: require('../../assets/science2.png'),
+      url: 'https://www.youtube.com/watch?v=wMOKXSZVrMc',
+    },
+  ];
+
+  const cultureData = [
+    {
+      id: 1,
+      title: 'How Japanese enjoy their food',
+      image: require('../../assets/culture1.png'),
+      url: 'https://www.youtube.com/watch?v=z3W7waKeMk0',
+    },
+    {
+      id: 2,
+      title: 'Pray for the future',
+      image: require('../../assets/culture2.png'),
+      url: 'https://www.youtube.com/watch?v=f745hh9bRPwo',
+    },
+  ];
+
   return (
     <ScrollView style={styles.container}>
-      {/* --------------------- HEADER --------------------- */}
-
       <Header />
 
-      {/* --------------------- GRID CATEGORY --------------------- */}
+      {/* ------------ CATEGORY GRID ------------ */}
       <View style={styles.gridWrapper}>
-        {[
-          {
-            id: 1,
-            title: 'Beginner',
-            color: '#f4deeb',
-            image: require('../../assets/category1.png'),
-          },
-          {
-            id: 2,
-            title: 'Intermediate',
-            color: '#c9b0e7',
-            image: require('../../assets/category2.png'),
-          },
-          {
-            id: 3,
-            title: 'Advance',
-            color: '#84bbd0',
-            image: require('../../assets/category3.png'),
-          },
-          {
-            id: 4,
-            title: 'Expert',
-            color: '#877dd3',
-            image: require('../../assets/category4.png'),
-          },
-        ].map(item => (
+        {[...Array(4)].map((_, idx) => {
+          const item = [
+            {
+              id: 1,
+              title: 'Beginner',
+              color: '#f4deeb',
+              image: require('../../assets/category1.png'),
+            },
+            {
+              id: 2,
+              title: 'Intermediate',
+              color: '#c9b0e7',
+              image: require('../../assets/category2.png'),
+            },
+            {
+              id: 3,
+              title: 'Advance',
+              color: '#84bbd0',
+              image: require('../../assets/category3.png'),
+            },
+            {
+              id: 4,
+              title: 'Expert',
+              color: '#877dd3',
+              image: require('../../assets/category4.png'),
+            },
+          ][idx];
+
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={[styles.gridBox, { backgroundColor: item.color }]}
+              onPress={() =>
+                navigation.navigate('LessonScreen', { id: item.id })
+              }
+            >
+              <Image
+                source={item.image}
+                style={{
+                  width: 55,
+                  height: 55,
+                  marginBottom: 8,
+                  borderRadius: 12,
+                }}
+              />
+              <Text style={styles.gridText}>{item.title}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {/* ------------ HISTORY SECTION ------------ */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>History</Text>
+        </View>
+
+        {historyData.map(item => (
           <TouchableOpacity
             key={item.id}
-            style={[styles.gridBox, { backgroundColor: item.color }]}
-            onPress={() => navigation.navigate('LessonScreen', { id: item.id })}
+            style={styles.lessonCard}
+            onPress={() => {
+              setVideoUrl(item.url);
+              setShowVideo(true);
+            }}
           >
-            <Image
-              source={item.image}
-              style={{
-                width: 55,
-                height: 55,
-                marginBottom: 8,
-                borderRadius: 12,
-              }}
+            <Image source={item.image} style={styles.lessonImage} />
+            <Text style={styles.lessonText}>{item.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* ------------ CULTURE SECTION ------------ */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Culture</Text>
+        </View>
+
+        {cultureData.map(item => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.lessonCard}
+            onPress={() => {
+              setVideoUrl(item.url);
+              setShowVideo(true);
+            }}
+          >
+            <Image source={item.image} style={styles.lessonImage} />
+            <Text style={styles.lessonText}>{item.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* ------------ VIDEO MODAL ------------ */}
+      <Modal
+        isVisible={showVideo}
+        onBackdropPress={() => setShowVideo(false)}
+        backdropOpacity={0.4}
+        animationIn="zoomIn"
+        animationOut="zoomOut"
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Video Preview</Text>
+
+          <View
+            style={{
+              width: '100%',
+              height: 220,
+              borderRadius: 12,
+              overflow: 'hidden',
+            }}
+          >
+            <WebView
+              source={{ uri: videoUrl }}
+              style={{ flex: 1 }}
+              javaScriptEnabled
+              domStorageEnabled
             />
-            <Text style={styles.gridText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+          </View>
 
-      {/* --------------------- SECTION: Science --------------------- */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Science</Text>
-          <Text style={styles.arrow}>→</Text>
+          <TouchableOpacity
+            style={styles.closeBtn}
+            onPress={() => setShowVideo(false)}
+          >
+            <Text style={styles.closeText}>Close</Text>
+          </TouchableOpacity>
         </View>
-
-        {[
-          {
-            id: 1,
-            title: 'Gravity Basics',
-            image: require('../../assets/abc.png'),
-          },
-          {
-            id: 2,
-            title: 'Solar System',
-            image: require('../../assets/abc.png'),
-          },
-        ].map(item => (
-          <TouchableOpacity key={item.id} style={styles.lessonCard}>
-            <Image source={item.image} style={styles.lessonImage} />
-            <Text style={styles.lessonText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* --------------------- SECTION: Anime --------------------- */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Anime</Text>
-          <Text style={styles.arrow}>→</Text>
-        </View>
-
-        {[
-          {
-            id: 1,
-            title: 'Naruto Special',
-            image: require('../../assets/abc.png'),
-          },
-          {
-            id: 2,
-            title: 'Demon Slayer',
-            image: require('../../assets/abc.png'),
-          },
-        ].map(item => (
-          <TouchableOpacity key={item.id} style={styles.lessonCard}>
-            <Image source={item.image} style={styles.lessonImage} />
-            <Text style={styles.lessonText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -166,43 +232,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#203061',
   },
-
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 20,
-    backgroundColor: '#5578bb',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  hello: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#f4deeb',
-  },
-  subtitle: {
-    color: '#203061',
-    marginTop: 4,
-    fontSize: 15,
-  },
-
-  // ⭐ XP STYLE
-  xpText: {
-    marginTop: 6,
-    fontSize: 18,
-    color: '#fffacd',
-    fontWeight: '700',
-  },
-
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  weatherIcon: { width: 40, height: 40 },
-  avatar: { width: 45, height: 45, borderRadius: 25 },
 
   gridWrapper: {
     flexDirection: 'row',
@@ -231,7 +260,6 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 12,
     alignItems: 'center',
   },
@@ -239,11 +267,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#f7bfd8',
     fontWeight: '700',
-  },
-  arrow: {
-    fontSize: 24,
-    color: '#f7bfd8',
-    fontWeight: '900',
   },
 
   lessonCard: {
@@ -264,6 +287,31 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+
+  // ⭐ Modal
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 18,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  closeBtn: {
+    marginTop: 12,
+    backgroundColor: '#f06292',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  closeText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
   },
 });
 

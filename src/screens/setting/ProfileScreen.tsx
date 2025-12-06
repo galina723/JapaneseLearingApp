@@ -52,7 +52,7 @@ const ProfileScreen = () => {
           {/* AVATAR */}
           <View style={styles.avatarWrapper}>
             <Image
-              source={require('../../assets/logo.png')}
+              source={require('../../assets/avt.png')}
               style={styles.avatar}
             />
 

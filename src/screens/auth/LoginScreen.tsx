@@ -94,7 +94,6 @@ const LoginScreen = ({}) => {
         <Text style={styles.logoText}>JapanWise</Text>
         <Text style={styles.welcomeText}>Welcome back!</Text>
 
-        {/* Username */}
         <View style={styles.inputCard}>
           <TextInput
             style={styles.input}
@@ -107,7 +106,6 @@ const LoginScreen = ({}) => {
           />
         </View>
 
-        {/* Password */}
         <View style={styles.inputCard}>
           <TextInput
             style={styles.input}
@@ -120,7 +118,6 @@ const LoginScreen = ({}) => {
           />
         </View>
 
-        {/* 🔥 Forgot Password */}
         <TouchableOpacity
           style={{ width: '100%', maxWidth: 350, alignItems: 'flex-end' }}
           onPress={() => navigation.navigate('EmailForgetScreen')}
@@ -148,7 +145,6 @@ const LoginScreen = ({}) => {
           </Text>
         </TouchableOpacity>
 
-        {/* Register */}
         <View style={styles.registerContainer}>
           <Text style={styles.registerText}>Don't have an account? </Text>
           <TouchableOpacity

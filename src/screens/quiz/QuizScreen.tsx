@@ -10,16 +10,18 @@ import {
 import axios from 'axios';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 interface Question {
   questionId: number;
   questionText: string;
-  options: string; // JSON string
+  options: string;
   pointValue: number;
 }
 
 const QuizScreen = () => {
   const navigation: any = useNavigation();
+  const { t } = useTranslation();
   const route = useRoute();
   const lessonId = (route.params as any)?.lessonId;
 
@@ -34,22 +36,20 @@ const QuizScreen = () => {
       setLoading(true);
 
       const token = await AsyncStorage.getItem('token');
-
-      /** 1️⃣ Lấy quiz theo lessonId */
+      console.log(quizId, lessonId);
       const quizRes = await axios.get(
-        `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/quizzes/${lessonId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/lessons/${lessonId}/quizzes`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
+
+      console.log(1, quizRes);
 
       if (!quizRes.data.data) return;
 
-      const q = quizRes.data.data;
+      const q = quizRes.data.data[0];
       setQuizId(q.quizId);
       setQuizTitle(q.title);
 
-      /** 2️⃣ Lấy question theo quizId */
       const quesRes = await axios.get(
         `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/quizzes/${q.quizId}/questions`,
         {
@@ -123,15 +123,13 @@ const QuizScreen = () => {
       })}
 
       <TouchableOpacity style={styles.submitBtn} onPress={submitQuiz}>
-        <Text style={styles.submitText}>Submit Quiz</Text>
+        <Text style={styles.submitText}>{t('Submitquiz')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 };
 
 export default QuizScreen;
-
-/* ---------------------------- STYLES ---------------------------- */
 
 const styles = StyleSheet.create({
   container: {

@@ -12,11 +12,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Lesson } from '../../models/Lesson';
 import { LessonDetail } from '../../models/LessonDetail';
+import { useTranslation } from 'react-i18next';
 
 const LessonDetailScreen = () => {
   const route = useRoute();
   const navigation: any = useNavigation();
-
+  const { t } = useTranslation();
   const [lesson, setLesson] = useState<Lesson>();
   const [lessonDetail, setLessonDetail] = useState<LessonDetail>();
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,6 @@ const LessonDetailScreen = () => {
 
       const token = await AsyncStorage.getItem('token');
 
-      /** 📌 GET lesson info */
       const lessonRes = await axios.get(
         `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/lessons/${id}`,
         {
@@ -42,7 +42,6 @@ const LessonDetailScreen = () => {
         setLesson(lessonRes.data.data);
       }
 
-      /** 📌 GET lesson detail */
       const detailRes = await axios.get(
         `https://lumbar-mora-uncoroneted.ngrok-free.dev/api/lessons/${id}/details`,
         {
@@ -82,25 +81,27 @@ const LessonDetailScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.headerCard}>
         <Text style={styles.lessonTitle}>{lesson?.lessonName}</Text>
 
         <View style={styles.typeBadge}>
           <Text style={styles.typeText}>
-            {lessonDetail?.type === 0 ? 'VOCABULARY' : 'GRAMMAR'}
+            {lessonDetail?.type === 1
+              ? 'VOCABULARY'
+              : lessonDetail?.type === 2
+              ? 'GRAMMAR'
+              : 'KANJI'}
           </Text>
         </View>
 
         <Text style={styles.description}>{lesson?.description}</Text>
       </View>
 
-      {/* LESSON INFO */}
       <View style={styles.infoCard}>
-        <Text style={styles.infoLabel}>Order:</Text>
+        <Text style={styles.infoLabel}>{t('Order')}</Text>
         <Text style={styles.infoValue}>{lesson?.order}</Text>
 
-        <Text style={styles.infoLabel}>Status:</Text>
+        {/* <Text style={styles.infoLabel}>Status:</Text>
         <Text
           style={[
             styles.infoValue,
@@ -108,38 +109,33 @@ const LessonDetailScreen = () => {
           ]}
         >
           {lesson?.status ? 'Active' : 'Inactive'}
-        </Text>
+        </Text> */}
       </View>
-
-      {/* CONTENT */}
-      <Text style={styles.sectionTitle}>Lesson Content</Text>
+      <Text style={styles.sectionTitle}>{t('Lessoncontent')}</Text>
 
       {lessonDetail?.lessonData &&
         JSON.parse(lessonDetail.lessonData).map((item: any, index: number) => (
           <View key={index} style={styles.contentCard}>
             <Text style={styles.jp}>{item.text}</Text>
 
-            {item.romaji && <Text style={styles.romaji}>{item.romaji}</Text>}
-            {item.mean && <Text style={styles.mean}>{item.mean}</Text>}
+            {/* {item.romaji && <Text style={styles.romaji}>{item.romaji}</Text>}
+            {item.mean && <Text style={styles.mean}>{item.mean}</Text>} */}
           </View>
         ))}
 
-      {/* ⭐ BUTTON GO TO QUIZ ⭐ */}
       <TouchableOpacity
         style={styles.quizButton}
         onPress={() =>
           navigation.navigate('QuizScreen', { lessonId: lesson?.lessonId })
         }
       >
-        <Text style={styles.quizButtonText}>Go To Quiz</Text>
+        <Text style={styles.quizButtonText}>{t('Gotoquiz')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 };
 
 export default LessonDetailScreen;
-
-/* ---------------------------------- STYLES ---------------------------------- */
 
 const styles = StyleSheet.create({
   container: {

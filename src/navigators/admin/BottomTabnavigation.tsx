@@ -5,6 +5,7 @@ import UserNavigation from './UserNavigation';
 import LessonNavigation from './LessonNavigation';
 import QuizNavigation from './QuizNavigation';
 import { Icon } from 'react-native-paper';
+import CategoryScreen from '../../screens/onlyforadmin/category/CategoryScreen';
 
 const AdminBottomTabnavigation = () => {
   const Tab = createBottomTabNavigator();
@@ -17,6 +18,16 @@ const AdminBottomTabnavigation = () => {
           tabBarLabel: 'Dashboard',
           tabBarIcon: () => {
             return <Icon size={24} source="home" />;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="CategoryScreen"
+        component={CategoryScreen}
+        options={{
+          tabBarLabel: 'Category',
+          tabBarIcon: () => {
+            return <Icon size={24} source="format-list-bulleted" />;
           },
         }}
       />

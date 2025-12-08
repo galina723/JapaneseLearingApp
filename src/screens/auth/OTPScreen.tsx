@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -20,14 +21,13 @@ interface OTPScreenProps {
 const OTPScreen = () => {
   const route = useRoute();
   const navigation: any = useNavigation();
-  const { email } = route.params as { email: string }; // ✅ Lấy email từ RegisterScreen
+  const { email } = route.params as { email: string };
 
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleVerify = async () => {
     if (!otp) {
-      //alert('Please enter the OTP code.');
       return;
     }
 
@@ -42,15 +42,13 @@ const OTPScreen = () => {
         },
       );
 
-      //alert('OTP Verified Successfully!');
-
       navigation.navigate('Login');
     } catch (error: any) {
       console.log(
         'OTP Verify Failed:',
         error?.response?.data || error?.message,
       );
-      //alert('Invalid OTP. Please try again!');
+      Alert.alert('Invalid OTP. Please try again!');
     } finally {
       setLoading(false);
     }

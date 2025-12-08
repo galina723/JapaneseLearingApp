@@ -49,10 +49,8 @@ const AddQuestionDetailScreen = () => {
     try {
       const token = await AsyncStorage.getItem('token');
 
-      // Build array and convert to JSON string
       const optionArray = [option1, option2, option3, option4];
-      const optionsJson = JSON.stringify(optionArray); // => "[\"a\",\"b\",\"c\",\"d\"]"
-
+      const optionsJson = JSON.stringify(optionArray);
       const payload: Root = {
         questionText,
         options: optionsJson,

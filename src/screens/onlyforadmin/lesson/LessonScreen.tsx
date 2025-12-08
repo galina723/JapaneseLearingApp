@@ -45,10 +45,6 @@ const LessonScreen = () => {
     const unsubscribe = navigation.addListener('focus', loadLessons);
     return unsubscribe;
   }, []);
-
-  // ============================
-  // DELETE LESSON
-  // ============================
   const deleteLesson = async () => {
     if (selectedLessonId == null) return;
 
@@ -83,14 +79,11 @@ const LessonScreen = () => {
         activeOpacity={0.9}
       >
         <View style={styles.headerRow}>
-          {/* Category badge */}
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>{item.categoryName}</Text>
           </View>
 
           <Text style={styles.title}>{item.lessonName}</Text>
-
-          {/* 3 DOTS */}
           <TouchableOpacity
             style={styles.menuButton}
             onPress={e => {
@@ -121,12 +114,20 @@ const LessonScreen = () => {
         style={styles.fab}
         onPress={() => navigation.navigate('AddLessonScreen')}
       />
-
-      {/* ACTION MODAL */}
       <Modal transparent visible={actionModalVisible} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.actionModal}>
-            {/* NEW: View lesson detail */}
+            <TouchableOpacity
+              style={styles.actionItem}
+              onPress={() => {
+                setActionModalVisible(false);
+                navigation.navigate('EditLessonScreen', {
+                  lessonId: selectedLessonId,
+                });
+              }}
+            >
+              <Text style={styles.actionText}>Edit Lesson</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionItem}
               onPress={() => {
@@ -143,18 +144,6 @@ const LessonScreen = () => {
               style={styles.actionItem}
               onPress={() => {
                 setActionModalVisible(false);
-                navigation.navigate('EditLessonScreen', {
-                  lessonId: selectedLessonId,
-                });
-              }}
-            >
-              <Text style={styles.actionText}>Edit Lesson Detail</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionItem}
-              onPress={() => {
-                setActionModalVisible(false);
                 navigation.navigate('AddLessonDetailScreen', {
                   lessonId: selectedLessonId,
                 });
@@ -162,6 +151,17 @@ const LessonScreen = () => {
             >
               <Text style={styles.actionText}>Add Lesson Detail</Text>
             </TouchableOpacity>
+            {/* <TouchableOpacity
+              style={styles.actionItem}
+              onPress={() => {
+                setActionModalVisible(false);
+                navigation.navigate('EditLessonDetailScreen', {
+                  lessonId: selectedLessonId,
+                });
+              }}
+            >
+              <Text style={styles.actionText}>Edit Lesson Detail</Text>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               style={styles.actionItem}
@@ -186,7 +186,6 @@ const LessonScreen = () => {
         </View>
       </Modal>
 
-      {/* DELETE CONFIRM */}
       <Modal transparent visible={deleteModalVisible} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.deleteModal}>

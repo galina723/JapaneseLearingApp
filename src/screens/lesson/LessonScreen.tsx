@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -12,19 +13,20 @@ import {
   Animated,
   ListRenderItemInfo,
 } from 'react-native';
+import { Lesson } from '../../models/Lesson';
 
-/** Lesson type */
-type Lesson = {
-  lessonId: number;
-  lessonName: string;
-  description: string;
-  order: number;
-  categoryId: number;
-  categoryName: string;
-};
+// type Lesson = {
+//   lessonId: number;
+//   lessonName: string;
+//   description: string;
+//   order: number;
+//   categoryId: number;
+//   categoryName: string;
+// };
 
 const LessonScreen: React.FC = () => {
   const navigation: any = useNavigation();
+  const { t } = useTranslation();
   const [lessons, setLessons] = React.useState<Lesson[]>([]);
   const route = useRoute();
   React.useEffect(() => {
@@ -48,7 +50,7 @@ const LessonScreen: React.FC = () => {
         const lessonT = res.data.data.filter(
           (lesson: Lesson) => lesson.categoryId === (route.params as any).id,
         );
-        console.log('3p', lessonT);
+        console.log(4532, lessonT);
         setLessons(lessonT);
       }
     } catch (error) {
@@ -62,7 +64,7 @@ const LessonScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Lessons</Text>
+      <Text style={styles.title}>{t('Lesson')}</Text>
 
       <FlatList
         data={lessons}
@@ -75,7 +77,6 @@ const LessonScreen: React.FC = () => {
   );
 };
 
-/** LessonCard with animations */
 const LessonCard: React.FC<{ lesson: Lesson; navigation: any }> = ({
   lesson,
   navigation,
@@ -108,12 +109,9 @@ const LessonCard: React.FC<{ lesson: Lesson; navigation: any }> = ({
           navigation.navigate('LessonDetailScreen', { id: lesson.lessonId })
         }
       >
-        {/* Order Circle */}
         <View style={styles.circle}>
           <Text style={styles.circleText}>{lesson.order}</Text>
         </View>
-
-        {/* Content */}
         <View style={styles.content}>
           <Text style={styles.lessonName}>{lesson.lessonName}</Text>
           <Text style={styles.desc} numberOfLines={2}>
@@ -160,7 +158,6 @@ function formatDate(d: Date | string) {
 
 export default LessonScreen;
 
-/* ====================== STYLES ====================== */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -173,7 +170,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 14,
-    color: '#F2F5FF', // trắng xanh
+    color: '#F2F5FF',
   },
 
   listContent: {

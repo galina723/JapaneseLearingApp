@@ -9,9 +9,11 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const UpdateProfileScreen = () => {
   const navigation: any = useNavigation();
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [fullname, setFullname] = useState('');
@@ -55,10 +57,10 @@ const UpdateProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Edit Profile</Text>
+      <Text style={styles.headerTitle}>{t('Editprofile')}</Text>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Username</Text>
+        <Text style={styles.label}>{t('Username')}</Text>
         <TextInput
           style={[styles.input, styles.disabled]}
           value={username}
@@ -72,7 +74,7 @@ const UpdateProfileScreen = () => {
           editable={false}
         />
 
-        <Text style={styles.label}>Fullname</Text>
+        <Text style={styles.label}>{t('Fullname')}</Text>
         <TextInput
           style={styles.input}
           value={fullname}
@@ -82,7 +84,7 @@ const UpdateProfileScreen = () => {
         />
 
         <TouchableOpacity style={styles.btn} onPress={updateProfile}>
-          <Text style={styles.btnText}>Save Changes</Text>
+          <Text style={styles.btnText}>{t('Savechange')}</Text>
         </TouchableOpacity>
       </View>
     </View>

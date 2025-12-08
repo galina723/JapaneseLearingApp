@@ -33,7 +33,6 @@ const UserScreen = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<UserStatus | null>(null);

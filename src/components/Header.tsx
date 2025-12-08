@@ -3,8 +3,11 @@ import { View, Text, Image, ActivityIndicator } from 'react-native';
 import { LocationWeatherModel, CurrentweatherModel } from '../models/Weather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
+  const { t } = useTranslation();
+
   const [location, setLocation] = useState<LocationWeatherModel | null>(null);
   const [current, setCurrent] = useState<CurrentweatherModel | null>(null);
   const [username, setUsername] = useState<string>('User');
@@ -24,7 +27,6 @@ const Header = () => {
     }
   };
 
-  // ✅ LẤY USERNAME TỪ BACKEND
   const getUserProfile = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -66,7 +68,6 @@ const Header = () => {
         justifyContent: 'space-between',
       }}
     >
-      {/* LEFT SIDE */}
       <View style={{ flexDirection: 'column', flex: 1 }}>
         <Text
           style={{
@@ -76,7 +77,7 @@ const Header = () => {
             marginBottom: 4,
           }}
         >
-          Hello, {username} 👋
+          {t('Hello')}, {username}
         </Text>
 
         {!current || !location ? (
@@ -95,13 +96,11 @@ const Header = () => {
                 fontWeight: '500',
               }}
             >
-              {location.name} · {current.temp_c}°C · {current.condition.text}
+              {location.name} · {current.temp_c}°C
             </Text>
           </View>
         )}
       </View>
-
-      {/* RIGHT SIDE – Avatar */}
       <View
         style={{
           backgroundColor: '#7c6ac7',

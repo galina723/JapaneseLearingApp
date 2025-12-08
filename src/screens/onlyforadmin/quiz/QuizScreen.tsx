@@ -22,7 +22,7 @@ interface Quiz {
 const QuizScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const { lessonId } = route.params; // ⭐ chỉ có lessonId
+  const { lessonId } = route.params;
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);

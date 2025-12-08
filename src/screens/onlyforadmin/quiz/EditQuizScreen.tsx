@@ -22,7 +22,6 @@ const EditQuizScreen = () => {
   const [timeLimit, setTimeLimit] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Fetch quiz khi vào màn hình
   useEffect(() => {
     const fetchQuiz = async () => {
       try {

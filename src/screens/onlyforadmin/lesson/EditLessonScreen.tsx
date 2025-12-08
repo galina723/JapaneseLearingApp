@@ -26,19 +26,17 @@ const EditLessonScreen = () => {
   const navigation: any = useNavigation();
   const route: any = useRoute();
 
-  const lessonId = route.params?.lessonId; // 🔥 nhận id từ màn hình trước
+  const lessonId = route.params?.lessonId;
 
   const [lessonName, setLessonName] = useState('');
   const [description, setDescription] = useState('');
   const [order, setOrder] = useState('');
+  const [lessonData, setLessonData] = useState('');
   const [status, setStatus] = useState(true);
   const [selectedCat, setSelectedCat] = useState<any>(null);
 
   const [openCatModal, setOpenCatModal] = useState(false);
 
-  // ============================
-  // 🔥 LOAD LESSON BY ID
-  // ============================
   useEffect(() => {
     loadLessonDetail();
   }, []);
@@ -61,6 +59,7 @@ const EditLessonScreen = () => {
         setDescription(data.description);
         setOrder(String(data.order));
         setStatus(data.status);
+        setLessonData(data.lessonData);
 
         const foundCat = categories.find(c => c.id === data.categoryId);
         setSelectedCat(foundCat || null);
@@ -70,9 +69,6 @@ const EditLessonScreen = () => {
     }
   };
 
-  // ============================
-  // 🔥 AUTO ORDER BY CATEGORY
-  // ============================
   const fetchOrderByCategory = async (catId: number) => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -98,9 +94,6 @@ const EditLessonScreen = () => {
     }
   };
 
-  // ============================
-  // 🔥 SAVE: PUT UPDATE
-  // ============================
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -111,6 +104,7 @@ const EditLessonScreen = () => {
           lessonName,
           description,
           order: Number(order),
+          lessonData,
           categoryId: selectedCat?.id,
           status,
         },
@@ -173,7 +167,6 @@ const EditLessonScreen = () => {
         <Text style={styles.saveText}>Save Changes</Text>
       </TouchableOpacity>
 
-      {/* CATEGORY MODAL */}
       <Modal visible={openCatModal} transparent animationType="slide">
         <View style={styles.modalWrapper}>
           <View style={styles.modalBox}>
@@ -211,9 +204,6 @@ const EditLessonScreen = () => {
 
 export default EditLessonScreen;
 
-// ============================
-// 🔥 STYLES
-// ============================
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F7F7F7', padding: 16 },
   header: { fontSize: 22, fontWeight: '700', marginBottom: 12, color: '#333' },

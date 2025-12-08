@@ -22,11 +22,9 @@ const DashboardScreen = () => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {/* HEADER */}
       <Text style={styles.header}>Admin Dashboard</Text>
       <Text style={styles.subHeader}>Manage your system</Text>
 
-      {/* ROW 1 */}
       <View style={styles.row}>
         <TouchableOpacity style={styles.card}>
           <Text style={styles.icon}>👥</Text>
@@ -41,7 +39,6 @@ const DashboardScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* ROW 2 */}
       <View style={styles.row}>
         <TouchableOpacity style={styles.card}>
           <Text style={styles.icon}>📊</Text>
@@ -56,7 +53,6 @@ const DashboardScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* LOGOUT */}
       <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>

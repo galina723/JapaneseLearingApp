@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
@@ -18,15 +18,16 @@ import {
 } from '../../models/Weather';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
+import { useTranslation } from 'react-i18next';
 
 const HomeScreen = () => {
   const navigation: any = useNavigation();
+  const { t } = useTranslation();
   const [weather, setWeather] = useState<CurrentweatherModel | null>(null);
   const [location, setLocation] = useState<LocationWeatherModel | null>(null);
 
   const [xp, setXp] = useState(0);
 
-  // ⭐ Modal + Video
   const [showVideo, setShowVideo] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
 
@@ -56,17 +57,16 @@ const HomeScreen = () => {
     return focus;
   }, []);
 
-  // ⭐ DATA (History + Culture video)
   const historyData = [
     {
       id: 1,
-      title: 'History',
+      title: 'Japan after World War II',
       image: require('../../assets/science1.png'),
       url: 'https://www.youtube.com/watch?v=uQX8UwV87Os',
     },
     {
       id: 2,
-      title: 'Landscape',
+      title: '13 wonders of Japan',
       image: require('../../assets/science2.png'),
       url: 'https://www.youtube.com/watch?v=wMOKXSZVrMc',
     },
@@ -90,32 +90,30 @@ const HomeScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <Header />
-
-      {/* ------------ CATEGORY GRID ------------ */}
       <View style={styles.gridWrapper}>
         {[...Array(4)].map((_, idx) => {
           const item = [
             {
               id: 1,
-              title: 'Beginner',
+              title: t('Beginner'),
               color: '#f4deeb',
               image: require('../../assets/category1.png'),
             },
             {
               id: 2,
-              title: 'Intermediate',
+              title: t('Intermediate'),
               color: '#c9b0e7',
               image: require('../../assets/category2.png'),
             },
             {
               id: 3,
-              title: 'Advance',
+              title: t('Advance'),
               color: '#84bbd0',
               image: require('../../assets/category3.png'),
             },
             {
               id: 4,
-              title: 'Expert',
+              title: t('Expert'),
               color: '#877dd3',
               image: require('../../assets/category4.png'),
             },
@@ -144,10 +142,9 @@ const HomeScreen = () => {
         })}
       </View>
 
-      {/* ------------ HISTORY SECTION ------------ */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>History</Text>
+          <Text style={styles.sectionTitle}>{t('History')}</Text>
         </View>
 
         {historyData.map(item => (
@@ -165,10 +162,9 @@ const HomeScreen = () => {
         ))}
       </View>
 
-      {/* ------------ CULTURE SECTION ------------ */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Culture</Text>
+          <Text style={styles.sectionTitle}>{t('Culture')}</Text>
         </View>
 
         {cultureData.map(item => (
@@ -186,7 +182,6 @@ const HomeScreen = () => {
         ))}
       </View>
 
-      {/* ------------ VIDEO MODAL ------------ */}
       <Modal
         isVisible={showVideo}
         onBackdropPress={() => setShowVideo(false)}
@@ -195,7 +190,7 @@ const HomeScreen = () => {
         animationOut="zoomOut"
       >
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Video Preview</Text>
+          <Text style={styles.modalTitle}>{t('VideoPreview')}</Text>
 
           <View
             style={{
@@ -217,15 +212,13 @@ const HomeScreen = () => {
             style={styles.closeBtn}
             onPress={() => setShowVideo(false)}
           >
-            <Text style={styles.closeText}>Close</Text>
+            <Text style={styles.closeText}>{t('Close')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
     </ScrollView>
   );
 };
-
-/* ---------------------- STYLES ---------------------- */
 
 const styles = StyleSheet.create({
   container: {

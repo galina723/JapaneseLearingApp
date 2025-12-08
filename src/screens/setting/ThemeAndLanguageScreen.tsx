@@ -5,60 +5,61 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
+
+type LANGUAGE = 'vi' | 'en';
 
 const ThemeAndLanguageScreen = () => {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation();
+
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
-  const [language, setLanguage] = useState<'vi' | 'en'>('vi');
+  const [language, setLanguage] = useState<LANGUAGE>('vi');
+
+  useEffect(() => {
+    checkCurrentLanguage();
+  }, []);
+
+  const checkCurrentLanguage = async () => {
+    const res = await AsyncStorage.getItem('language');
+
+    setLanguage((res as LANGUAGE) || 'vi');
+  };
+
+  const handleChangeLanguage = async (language: LANGUAGE) => {
+    await AsyncStorage.setItem('language', language);
+    setLanguage(language);
+    handleSetLanguage(language);
+  };
+
+  const handleSetLanguage = (currentLang: string) => {
+    i18n.changeLanguage(currentLang);
+    i18n.language = currentLang;
+  };
 
   return (
     <ScrollView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Settings</Text>
-        <Text style={styles.headerSub}>Theme & Language</Text>
+        <Text style={styles.headerTitle}>{t('Setting')}</Text>
+        <Text style={styles.headerSub}>{t('Language')}</Text>
       </View>
 
-      {/* THEME SECTION */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🎨 Theme</Text>
-
-        <TouchableOpacity
-          style={[styles.option, theme === 'light' && styles.activeOption]}
-          onPress={() => setTheme('light')}
-        >
-          <Text style={styles.optionText}>🌞 Light</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.option, theme === 'dark' && styles.activeOption]}
-          onPress={() => setTheme('dark')}
-        >
-          <Text style={styles.optionText}>🌙 Dark</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.option, theme === 'system' && styles.activeOption]}
-          onPress={() => setTheme('system')}
-        >
-          <Text style={styles.optionText}>⚙️ System Default</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* LANGUAGE SECTION */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🌏 Language</Text>
+        <Text style={styles.sectionTitle}>🌏 {t('Language')}</Text>
 
         <TouchableOpacity
           style={[styles.option, language === 'vi' && styles.activeOption]}
-          onPress={() => setLanguage('vi')}
+          onPress={() => handleChangeLanguage('vi')}
         >
-          <Text style={styles.optionText}>🇻🇳 Vietnamese</Text>
+          <Text style={styles.optionText}>🇻🇳 Tiếng Việt</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.option, language === 'en' && styles.activeOption]}
-          onPress={() => setLanguage('en')}
+          onPress={() => handleChangeLanguage('en')}
         >
           <Text style={styles.optionText}>🇬🇧 English</Text>
         </TouchableOpacity>

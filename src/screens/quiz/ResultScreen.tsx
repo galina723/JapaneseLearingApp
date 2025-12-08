@@ -9,9 +9,11 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const ResultScreen = () => {
   const navigation: any = useNavigation();
+  const { t } = useTranslation();
   const route = useRoute();
 
   const { selected, quizId } = route.params as any;
@@ -29,7 +31,6 @@ const ResultScreen = () => {
       setLoading(true);
       const token = await AsyncStorage.getItem('token');
 
-      /** Convert answers đúng format API */
       const answersArray = Object.keys(selected).map(qId => ({
         questionId: Number(qId),
         answer: selected[qId],
@@ -40,6 +41,8 @@ const ResultScreen = () => {
         answers: answersArray,
       };
 
+      console.log(body);
+
       const res = await axios.post(
         'https://lumbar-mora-uncoroneted.ngrok-free.dev/api/quizzes/submit',
         body,
@@ -48,21 +51,22 @@ const ResultScreen = () => {
         },
       );
 
+      console.log('>>>>>>', res);
+
       const result = res.data.data;
 
       const gained = result.xpGained ?? 0;
       setScore(result.totalScore ?? 0);
       setXpGained(gained);
 
-      /** ⭐ COMMUNITY: Cộng XP vào XP đang có (đang lưu local) */
       const oldXP = Number(await AsyncStorage.getItem('xp')) || 0;
       const newXP = oldXP + gained;
 
       await AsyncStorage.setItem('xp', String(newXP));
 
-      console.log('⭐ XP OLD:', oldXP);
-      console.log('⭐ XP GAINED:', gained);
-      console.log('⭐ XP NEW:', newXP);
+      console.log('XP OLD:', oldXP);
+      console.log('XP GAINED:', gained);
+      console.log('XP NEW:', newXP);
     } catch (err) {
       console.log('ERROR SUBMIT QUIZ:', err);
     } finally {
@@ -81,13 +85,13 @@ const ResultScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🎉 Kết Quả Quiz 🎉</Text>
+      <Text style={styles.title}>🎉 {t('Result')} 🎉</Text>
 
       <View style={styles.box}>
-        <Text style={styles.label}>Điểm của bạn:</Text>
+        <Text style={styles.label}>{t('Yourscore')}:</Text>
         <Text style={styles.score}>{score}</Text>
 
-        <Text style={styles.label}>XP Nhận Được:</Text>
+        <Text style={styles.label}>XP:</Text>
         <Text style={styles.xp}>+{xpGained} XP</Text>
       </View>
 
@@ -95,15 +99,13 @@ const ResultScreen = () => {
         style={styles.homeBtn}
         onPress={() => navigation.navigate('HomeScreen')}
       >
-        <Text style={styles.homeText}>Về trang chủ</Text>
+        <Text style={styles.homeText}>{t('Backtohome')}</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 export default ResultScreen;
-
-/* --------------------- STYLES --------------------- */
 
 const styles = StyleSheet.create({
   container: {

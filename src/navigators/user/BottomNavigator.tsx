@@ -7,9 +7,11 @@ import VideoScreen from '../../screens/video/VideoScreen';
 import RankScreen from '../../screens/rank/RankScreen';
 import ProfileScreen from '../../screens/setting/ProfileScreen';
 import SetttingNavigator from './SetttingNavigator';
+import { useTranslation } from 'react-i18next';
 
 const BottomNavigator = () => {
   const Tab = createBottomTabNavigator();
+  const { t } = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={() => ({
@@ -21,7 +23,7 @@ const BottomNavigator = () => {
         name="home"
         component={HomeNavigator}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: t('Home'),
           tabBarIcon: () => {
             return <Icon size={24} source="home" />;
           },
@@ -41,7 +43,7 @@ const BottomNavigator = () => {
         name="rank"
         component={RankScreen}
         options={{
-          tabBarLabel: 'Rank',
+          tabBarLabel: t('Rank'),
           tabBarIcon: () => {
             return <Icon size={24} source="format-wrap-top-bottom" />;
           },
@@ -51,7 +53,7 @@ const BottomNavigator = () => {
         name="setting"
         component={SetttingNavigator}
         options={{
-          tabBarLabel: 'Setting',
+          tabBarLabel: t('Setting'),
           tabBarIcon: () => {
             return <Icon size={24} source="account-settings" />;
           },

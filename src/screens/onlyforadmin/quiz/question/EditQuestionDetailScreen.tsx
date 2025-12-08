@@ -34,7 +34,6 @@ const EditQuestionDetailScreen = () => {
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [pointValue, setPointValue] = useState('');
 
-  // Fetch question detail
   const loadQuestion = async () => {
     try {
       const token = await AsyncStorage.getItem('token');

@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
+  FlatList,
 } from 'react-native';
 
 const AddLessonDetailScreen = () => {
@@ -17,12 +19,19 @@ const AddLessonDetailScreen = () => {
   const route = useRoute<any>();
   const { lessonId } = route.params;
 
-  const [type, setType] = useState('');
   const [order, setOrder] = useState('');
   const [jsonData, setJsonData] = useState('');
+  const [selectedCat, setSelectedCat] = useState<any>(null);
+  const [openCatModal, setOpenCatModal] = useState(false);
+
+  const types = [
+    { id: 1, name: 'Vocabulary' },
+    { id: 2, name: 'Grammar' },
+    { id: 3, name: 'Kanji' },
+  ];
 
   const handleSave = async () => {
-    if (!type || !order || !jsonData) {
+    if (!selectedCat || !order || !jsonData) {
       Alert.alert('Missing data', 'Please fill all fields.');
       return;
     }
@@ -31,7 +40,7 @@ const AddLessonDetailScreen = () => {
       const token = await AsyncStorage.getItem('token');
 
       const dataT = {
-        type: Number(type),
+        type: selectedCat.id,
         order: Number(order),
         jsonData: JSON.stringify([{ id: 1, text: jsonData, audio: '' }]),
       };
@@ -62,13 +71,14 @@ const AddLessonDetailScreen = () => {
 
       <View style={styles.card}>
         <Text style={styles.label}>Type</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={type}
-          onChangeText={setType}
-          placeholder="Ví dụ: 0, 1, 2..."
-        />
+        <TouchableOpacity
+          style={styles.dropdown}
+          onPress={() => setOpenCatModal(true)}
+        >
+          <Text style={{ fontSize: 15, color: selectedCat ? '#333' : '#888' }}>
+            {selectedCat ? selectedCat.name : 'Select type'}
+          </Text>
+        </TouchableOpacity>
 
         <Text style={styles.label}>Order</Text>
         <TextInput
@@ -85,7 +95,7 @@ const AddLessonDetailScreen = () => {
           style={[styles.input, { height: 150, textAlignVertical: 'top' }]}
           value={jsonData}
           multiline
-          placeholder="VD: 1.あ: a; 2. い: ii"
+          placeholder="VD: 1.あ: a; 2.い: i"
           onChangeText={setJsonData}
         />
       </View>
@@ -93,6 +103,38 @@ const AddLessonDetailScreen = () => {
       <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
         <Text style={styles.saveText}>Save Detail</Text>
       </TouchableOpacity>
+
+      {/* Modal chọn type */}
+      <Modal visible={openCatModal} transparent animationType="slide">
+        <View style={styles.modalWrapper}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Select Category</Text>
+
+            <FlatList
+              data={types}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.modalItem}
+                  onPress={() => {
+                    setSelectedCat(item);
+                    setOpenCatModal(false);
+                  }}
+                >
+                  <Text style={styles.modalItemText}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={() => setOpenCatModal(false)}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -134,15 +176,53 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
   },
-  formatBtn: {
-    backgroundColor: '#DDD',
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginTop: -4,
+  dropdown: {
+    backgroundColor: '#F3F3F3',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
   },
-  formatText: {
-    textAlign: 'center',
-    fontWeight: '600',
+  modalWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  modalBox: {
+    backgroundColor: '#FFF',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '60%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  modalItem: {
+    paddingVertical: 14,
+  },
+  modalItemText: {
+    fontSize: 16,
     color: '#333',
   },
+  closeBtn: {
+    marginTop: 18,
+    paddingVertical: 12,
+    backgroundColor: '#EEE',
+    borderRadius: 10,
+  },
+  closeText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
+
+export interface LessonDetail {
+  lessonId: number;
+  lessonName: string;
+  type: number;
+  order: number;
+  lessonData: string;
+}

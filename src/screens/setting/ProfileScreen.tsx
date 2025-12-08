@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
@@ -11,10 +11,18 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { User } from '../../models/User';
+import { useTranslation } from 'react-i18next';
 
 const ProfileScreen = () => {
   const navigation: any = useNavigation();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<User>();
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, []),
+  );
 
   const fetchProfile = async () => {
     try {
@@ -29,7 +37,6 @@ const ProfileScreen = () => {
 
       console.log('PROFILE DATA:', res.data);
 
-      // 🔥 SỬA Ở ĐÂY: API trả về { success, data }
       setProfile(res.data.data);
     } catch (err) {
       console.log('PROFILE ERROR: ', err);
@@ -47,9 +54,13 @@ const ProfileScreen = () => {
 
   const render = useCallback(() => {
     if (profile) {
+      const xp = profile?.xp || 0;
+      const level = Math.floor(xp / 100);
+      const currentXP = xp % 100;
+      const progressPercent = Math.min(currentXP, 100);
+
       return (
         <>
-          {/* AVATAR */}
           <View style={styles.avatarWrapper}>
             <Image
               source={require('../../assets/avt.png')}
@@ -59,18 +70,17 @@ const ProfileScreen = () => {
             <Text style={styles.username}>{profile?.username || '...'}</Text>
             <Text style={styles.fullname}>{profile?.fullname || '...'}</Text>
 
-            {/* EDIT PROFILE BUTTON */}
             <TouchableOpacity
               style={styles.editBtn}
               onPress={() => navigation.navigate('EditProfileScreen')}
             >
-              <Text style={styles.editText}>✏️ Edit Profile</Text>
+              <Text style={styles.editText}>{t('Editprofile')}</Text>
             </TouchableOpacity>
           </View>
 
           {/* USER INFO */}
           <View style={styles.infoCard}>
-            <Text style={styles.sectionTitle}>Account Information</Text>
+            <Text style={styles.sectionTitle}>{t('Accountin4')}</Text>
 
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>📧 Email</Text>
@@ -83,23 +93,22 @@ const ProfileScreen = () => {
             </View>
           </View>
 
-          {/* XP BAR */}
           <View style={styles.xpCard}>
-            <Text style={styles.xpTitle}>Progress</Text>
+            <Text style={styles.xpTitle}>{t('Progress')}</Text>
 
             <View style={styles.progressBar}>
               <View
                 style={[
                   styles.progressFill,
                   {
-                    width: `${Math.min((profile?.xp || 0) / 1, 100)}%`,
+                    width: `${progressPercent}%`,
                   },
                 ]}
               />
             </View>
 
             <Text style={styles.levelText}>
-              Level {Math.floor((profile?.xp || 0) / 100)}
+              {t('Level')} {level}
             </Text>
           </View>
         </>
@@ -110,24 +119,21 @@ const ProfileScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>My Profile</Text>
+        <Text style={styles.headerTitle}>{t('Myprofile')}</Text>
       </View>
 
       {render()}
 
-      {/* SETTINGS */}
       <TouchableOpacity
         style={styles.settingBtn}
         onPress={() => navigation.navigate('ThemeAndLanguageScreen')}
       >
-        <Text style={styles.btnText}>⚙️ Settings</Text>
+        <Text style={styles.btnText}>{t('Setting')}</Text>
       </TouchableOpacity>
 
-      {/* LOGOUT */}
       <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-        <Text style={styles.logoutText}>🚪 Logout</Text>
+        <Text style={styles.logoutText}>{t('Logout')}</Text>
       </TouchableOpacity>
 
       <View style={{ height: 40 }} />
@@ -136,10 +142,6 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-
-// ===============================
-//           STYLES
-// ===============================
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,16 @@ import {
 import { User } from '../../models/User';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const RankScreen = () => {
   const [rank, setRank] = React.useState<User[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleRank();
+    }, []),
+  );
 
   const handleRank = async () => {
     try {
@@ -39,7 +46,6 @@ const RankScreen = () => {
     handleRank();
   }, []);
 
-  // 👉 Danh sách từ TOP 4 trở đi
   const listWithoutTop3 = rank.slice(3);
 
   const renderItem = ({ item, index }: { item: User; index: number }) => (
@@ -47,7 +53,7 @@ const RankScreen = () => {
       <Text style={styles.rankNumber}>#{index + 4}</Text>
 
       <Image
-        source={require('../../assets/category3.png')}
+        source={require('../../assets/otherrank.png')}
         style={styles.rowAvatar}
       />
 
@@ -59,13 +65,11 @@ const RankScreen = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#203061' }}>
-      {/* TOP 3 */}
       {rank.length >= 3 && (
         <View style={styles.topContainer}>
-          {/* Rank 2 */}
           <View style={styles.topUserSmall}>
             <Image
-              source={require('../../assets/category3.png')}
+              source={require('../../assets/rank2.png')}
               style={styles.topAvatarSmall}
             />
             <Text style={styles.topName}>⭐ {rank[1].username}</Text>
@@ -73,11 +77,10 @@ const RankScreen = () => {
             <Text style={styles.topBadge}>🥈</Text>
           </View>
 
-          {/* Rank 1 */}
           <View style={styles.topUserLarge}>
             <View style={styles.glowCircle}>
               <Image
-                source={require('../../assets/category3.png')}
+                source={require('../../assets/rank1.png')}
                 style={styles.topAvatarLarge}
               />
             </View>
@@ -87,10 +90,9 @@ const RankScreen = () => {
             <Text style={styles.topBadge}>🥇</Text>
           </View>
 
-          {/* Rank 3 */}
           <View style={styles.topUserSmall}>
             <Image
-              source={require('../../assets/category3.png')}
+              source={require('../../assets/rank3.png')}
               style={styles.topAvatarSmall}
             />
             <Text style={styles.topName}>🎀 {rank[2].username}</Text>

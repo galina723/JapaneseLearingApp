@@ -11,6 +11,7 @@ import LessonDetailScreen from '../../screens/onlyforadmin/lesson/LessonDetailSc
 import AddQuestionDetailScreen from '../../screens/onlyforadmin/quiz/question/AddQuestionDetailScreen';
 import QuestionScreen from '../../screens/onlyforadmin/quiz/question/QuestionScreen';
 import EditQuestionDetailScreen from '../../screens/onlyforadmin/quiz/question/EditQuestionDetailScreen';
+import EditLessonDetailScreen from '../../screens/onlyforadmin/lesson/EditLessonDetailScreen';
 
 const LessonNavigation = () => {
   const Stack = createNativeStackNavigator();
@@ -40,6 +41,10 @@ const LessonNavigation = () => {
       <Stack.Screen
         name="EditQuestionDetailScreen"
         component={EditQuestionDetailScreen}
+      />
+      <Stack.Screen
+        name="EditLessonDetailScreen"
+        component={EditLessonDetailScreen}
       />
     </Stack.Navigator>
   );

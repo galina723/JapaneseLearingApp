@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
@@ -38,7 +39,7 @@ const RegisterScreen: React.FC<RegisterProps> = () => {
   const navigation: any = useNavigation();
   const handleRegister = async () => {
     if (!email || !password || !username || !fullname) {
-      //alert('All fields are required');
+      Alert.alert('All fields are required');
       return;
     }
 
@@ -57,7 +58,7 @@ const RegisterScreen: React.FC<RegisterProps> = () => {
       navigation.navigate('OTPScreen', { email });
     } catch (error: any) {
       console.error('Registration failed', error?.response || error?.message);
-      //alert('Register Failed, please try again');
+      Alert.alert('Register Failed, please try again');
     } finally {
       setLoading(false);
     }
@@ -143,7 +144,9 @@ const RegisterScreen: React.FC<RegisterProps> = () => {
 
           <View style={styles.loginContainer}>
             <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('LoginScreen')}
+            >
               <Text
                 style={[
                   styles.linkText,

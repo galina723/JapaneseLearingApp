@@ -32,9 +32,6 @@ const AddLessonScreen = () => {
   const [selectedCat, setSelectedCat] = useState<any>(null);
   const [openCatModal, setOpenCatModal] = useState(false);
 
-  // ======================================================
-  // 🔥 AUTO SET ORDER = số bài trong category + 1
-  // ======================================================
   const fetchOrderByCategory = async (catId: number) => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -49,7 +46,6 @@ const AddLessonScreen = () => {
       if (res.status === 200) {
         const allLessons = res.data.data;
 
-        // lọc theo category
         const filtered = allLessons.filter((x: any) => x.categoryId === catId);
 
         const newOrder = filtered.length + 1;
@@ -63,9 +59,6 @@ const AddLessonScreen = () => {
     }
   };
 
-  // ======================================================
-  // SAVE LESSON
-  // ======================================================
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -119,7 +112,7 @@ const AddLessonScreen = () => {
         <TextInput
           style={[styles.input, { backgroundColor: '#E5E5E5' }]}
           value={order}
-          editable={false} // 🔥 Không cho nhập tay
+          editable={false}
         />
 
         <Text style={styles.label}>Category</Text>
@@ -142,7 +135,6 @@ const AddLessonScreen = () => {
         <Text style={styles.saveText}>Save Lesson</Text>
       </TouchableOpacity>
 
-      {/* CATEGORY MODAL */}
       <Modal visible={openCatModal} transparent animationType="slide">
         <View style={styles.modalWrapper}>
           <View style={styles.modalBox}>
@@ -158,7 +150,6 @@ const AddLessonScreen = () => {
                     setSelectedCat(item);
                     setOpenCatModal(false);
 
-                    // 🔥 Khi chọn category thì auto update order
                     fetchOrderByCategory(item.id);
                   }}
                 >

@@ -135,7 +135,7 @@ const LessonDetailScreen = () => {
             <View style={styles.divider} />
             <View style={styles.rowItem}>
               <Text style={styles.label}>Order</Text>
-              <Text style={styles.value}>{lesson?.order}</Text>
+              <Text style={styles.value}>{lessonDetail?.order}</Text>
             </View>
           </View>
         </View>

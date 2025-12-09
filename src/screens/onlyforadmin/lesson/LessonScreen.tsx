@@ -44,6 +44,7 @@ const LessonScreen = () => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', loadLessons);
     return unsubscribe;
+    loadLessons();
   }, []);
   const deleteLesson = async () => {
     if (selectedLessonId == null) return;

@@ -15,7 +15,7 @@ const Header = () => {
   const getLocation = async () => {
     try {
       const api =
-        'https://api.weatherapi.com/v1/current.json?key=2606aa3114534ce3b5f32743252511&q=Ho Chi Minh';
+        'https://api.weatherapi.com/v1/current.json?key=d883c46bb977484798250410250912&q=Ho Chi Minh';
 
       const res = await fetch(api);
       const json = await res.json();

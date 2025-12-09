@@ -58,6 +58,7 @@ const QuizScreen = () => {
       );
 
       setQuestions(quesRes.data.data);
+      console.log(quesRes);
     } catch (err) {
       console.log('ERR QUIZ:', err);
     } finally {

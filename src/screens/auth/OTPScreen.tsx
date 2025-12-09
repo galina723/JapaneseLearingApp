@@ -42,7 +42,7 @@ const OTPScreen = () => {
         },
       );
 
-      navigation.navigate('Login');
+      navigation.navigate('LoginScreen');
     } catch (error: any) {
       console.log(
         'OTP Verify Failed:',

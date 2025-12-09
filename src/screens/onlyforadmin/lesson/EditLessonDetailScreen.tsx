@@ -75,7 +75,6 @@ const EditLessonDetailScreen = () => {
     }
   };
 
-  // Hàm 2: Lưu thay đổi (Update)
   const handleUpdate = async () => {
     if (!selectedCat || !order || !jsonData) {
       Alert.alert('Missing data', 'Please fill all fields.');
@@ -86,6 +85,7 @@ const EditLessonDetailScreen = () => {
       const token = await AsyncStorage.getItem('token');
 
       const dataToUpdate = {
+        lessonDetailId: lessonDetailId,
         type: selectedCat.id,
         order: Number(order),
         jsonData: JSON.stringify([{ id: 1, text: jsonData, audio: '' }]),
@@ -123,13 +123,13 @@ const EditLessonDetailScreen = () => {
       <Text style={styles.header}>Edit Lesson Detail</Text>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Type (Category)</Text>
+        <Text style={styles.label}>Type</Text>
         <TouchableOpacity
           style={styles.dropdown}
           onPress={() => setOpenCatModal(true)}
         >
           <Text style={{ fontSize: 15, color: selectedCat ? '#333' : '#888' }}>
-            {selectedCat ? selectedCat.name : 'Select category'}
+            {selectedCat ? selectedCat.name : 'Select type'}
           </Text>
         </TouchableOpacity>
 
@@ -159,7 +159,7 @@ const EditLessonDetailScreen = () => {
       <Modal visible={openCatModal} transparent animationType="slide">
         <View style={styles.modalWrapper}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Select Category</Text>
+            <Text style={styles.modalTitle}>Select type</Text>
 
             <FlatList
               data={types}

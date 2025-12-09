@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
 const RankScreen = () => {
-  const [rank, setRank] = React.useState<User[]>([]);
+  const [rank, setRank] = useState<User[]>([]);
 
   useFocusEffect(
     useCallback(() => {

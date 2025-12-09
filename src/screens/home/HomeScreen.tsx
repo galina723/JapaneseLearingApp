@@ -31,32 +31,6 @@ const HomeScreen = () => {
   const [showVideo, setShowVideo] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
 
-  const loadWeather = async () => {
-    try {
-      const url =
-        'https://api.weatherapi.com/v1/current.json?key=2606aa3114534ce3b5f32743252511&q=Ho Chi Minh';
-
-      const res = await axios.get(url);
-      setLocation(res.data.location);
-      setWeather(res.data.current);
-    } catch (error) {
-      console.log('Weather error: ', error);
-    }
-  };
-
-  const loadXP = async () => {
-    const savedXP = await AsyncStorage.getItem('xp');
-    setXp(Number(savedXP) || 0);
-  };
-
-  useEffect(() => {
-    loadWeather();
-    loadXP();
-
-    const focus = navigation.addListener('focus', () => loadXP());
-    return focus;
-  }, []);
-
   const historyData = [
     {
       id: 1,
@@ -87,38 +61,38 @@ const HomeScreen = () => {
     },
   ];
 
+  const items = [
+    {
+      id: 1,
+      title: t('Beginner'),
+      color: '#f4deeb',
+      image: require('../../assets/category1.png'),
+    },
+    {
+      id: 2,
+      title: t('Intermediate'),
+      color: '#c9b0e7',
+      image: require('../../assets/category2.png'),
+    },
+    {
+      id: 3,
+      title: t('Advance'),
+      color: '#84bbd0',
+      image: require('../../assets/category3.png'),
+    },
+    {
+      id: 4,
+      title: t('Expert'),
+      color: '#877dd3',
+      image: require('../../assets/category4.png'),
+    },
+  ];
+
   return (
     <ScrollView style={styles.container}>
       <Header />
       <View style={styles.gridWrapper}>
-        {[...Array(4)].map((_, idx) => {
-          const item = [
-            {
-              id: 1,
-              title: t('Beginner'),
-              color: '#f4deeb',
-              image: require('../../assets/category1.png'),
-            },
-            {
-              id: 2,
-              title: t('Intermediate'),
-              color: '#c9b0e7',
-              image: require('../../assets/category2.png'),
-            },
-            {
-              id: 3,
-              title: t('Advance'),
-              color: '#84bbd0',
-              image: require('../../assets/category3.png'),
-            },
-            {
-              id: 4,
-              title: t('Expert'),
-              color: '#877dd3',
-              image: require('../../assets/category4.png'),
-            },
-          ][idx];
-
+        {items.map(item => {
           return (
             <TouchableOpacity
               key={item.id}

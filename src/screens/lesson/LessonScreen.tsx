@@ -2,7 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   View,
@@ -10,26 +10,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Animated,
-  ListRenderItemInfo,
 } from 'react-native';
 import { Lesson } from '../../models/Lesson';
 
-// type Lesson = {
-//   lessonId: number;
-//   lessonName: string;
-//   description: string;
-//   order: number;
-//   categoryId: number;
-//   categoryName: string;
-// };
-
-const LessonScreen: React.FC = () => {
+const LessonScreen = () => {
   const navigation: any = useNavigation();
   const { t } = useTranslation();
-  const [lessons, setLessons] = React.useState<Lesson[]>([]);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
   const route = useRoute();
-  React.useEffect(() => {
+
+  useEffect(() => {
     if ((route.params as any).id) {
       fetchLessons();
     }
@@ -45,12 +35,11 @@ const LessonScreen: React.FC = () => {
           },
         },
       );
-      console.log(res);
+
       if (res.status === 200) {
         const lessonT = res.data.data.filter(
           (lesson: Lesson) => lesson.categoryId === (route.params as any).id,
         );
-        console.log(4532, lessonT);
         setLessons(lessonT);
       }
     } catch (error) {
@@ -58,7 +47,7 @@ const LessonScreen: React.FC = () => {
     }
   };
 
-  const renderItem = ({ item }: ListRenderItemInfo<Lesson>) => {
+  const renderItem = (item: Lesson) => {
     return <LessonCard lesson={item} navigation={navigation} />;
   };
 
@@ -71,7 +60,7 @@ const LessonScreen: React.FC = () => {
         keyExtractor={item => item.lessonId.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
-        renderItem={renderItem}
+        renderItem={({ item }) => renderItem(item)}
       />
     </View>
   );
@@ -81,80 +70,51 @@ const LessonCard: React.FC<{ lesson: Lesson; navigation: any }> = ({
   lesson,
   navigation,
 }) => {
-  const scale = useRef(new Animated.Value(1)).current;
-
-  const onPressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const onPressOut = () => {
-    Animated.spring(scale, {
-      toValue: 1,
-      friction: 5,
-      useNativeDriver: true,
-    }).start();
-  };
-
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
-      <TouchableOpacity
-        style={styles.card}
-        activeOpacity={0.9}
-        onPressIn={onPressIn}
-        onPressOut={onPressOut}
-        onPress={() =>
-          navigation.navigate('LessonDetailScreen', { id: lesson.lessonId })
-        }
-      >
-        <View style={styles.circle}>
-          <Text style={styles.circleText}>{lesson.order}</Text>
-        </View>
-        <View style={styles.content}>
-          <Text style={styles.lessonName}>{lesson.lessonName}</Text>
-          <Text style={styles.desc} numberOfLines={2}>
-            {lesson.description}
-          </Text>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.7}
+      onPress={() =>
+        navigation.navigate('LessonDetailScreen', {
+          id: lesson.lessonId,
+        })
+      }
+    >
+      <View style={styles.circle}>
+        <Text style={styles.circleText}>{lesson.order}</Text>
+      </View>
 
-          <View style={styles.metaRow}>
-            <View
+      <View style={styles.content}>
+        <Text style={styles.lessonName}>{lesson.lessonName}</Text>
+        <Text style={styles.desc}>{lesson.description}</Text>
+
+        <View style={styles.metaRow}>
+          <View
+            style={[
+              styles.statusTag,
+              {
+                backgroundColor: lesson.order ? '#C9FFE4' : '#FFDDDD',
+              },
+            ]}
+          >
+            <Text
               style={[
-                styles.statusTag,
-                {
-                  backgroundColor: lesson.order ? '#C9FFE4' : '#FFDDDD',
-                },
+                styles.statusText,
+                { color: lesson.order ? '#0F6B3C' : '#B12525' },
               ]}
             >
-              <Text
-                style={[
-                  styles.statusText,
-                  { color: lesson.order ? '#0F6B3C' : '#B12525' },
-                ]}
-              >
-                {lesson.order ? 'Active' : 'Inactive'}
-              </Text>
-            </View>
-
-            <Text style={styles.dateText}>{lesson.description}</Text>
+              {lesson.order ? 'Active' : 'Inactive'}
+            </Text>
           </View>
-        </View>
 
-        <Text style={styles.arrow}>›</Text>
-      </TouchableOpacity>
-    </Animated.View>
+          <Text style={styles.dateText}>{lesson.description}</Text>
+        </View>
+      </View>
+
+      <Text style={styles.arrow}>›</Text>
+    </TouchableOpacity>
   );
 };
-
-function formatDate(d: Date | string) {
-  try {
-    const dt = typeof d === 'string' ? new Date(d) : d;
-    return dt.toLocaleDateString();
-  } catch {
-    return '';
-  }
-}
 
 export default LessonScreen;
 
@@ -165,18 +125,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingTop: 18,
   },
-
   title: {
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 14,
     color: '#F2F5FF',
   },
-
   listContent: {
     paddingBottom: 40,
   },
-
   card: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
@@ -190,7 +147,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-
   circle: {
     width: 52,
     height: 52,
@@ -200,52 +156,43 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 14,
   },
-
   circleText: {
     fontSize: 19,
     fontWeight: '800',
     color: '#4D9FFF',
   },
-
   content: {
     flex: 1,
   },
-
   lessonName: {
     fontSize: 17,
     fontWeight: '700',
     color: '#111A34',
     marginBottom: 6,
   },
-
   desc: {
     fontSize: 14,
     color: '#4F5F85',
     marginBottom: 10,
   },
-
   metaRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-
   statusTag: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 14,
   },
-
   statusText: {
     fontSize: 12,
     fontWeight: '700',
   },
-
   dateText: {
     color: '#96A5C9',
     fontSize: 12,
   },
-
   arrow: {
     fontSize: 30,
     color: '#AFC5FF',

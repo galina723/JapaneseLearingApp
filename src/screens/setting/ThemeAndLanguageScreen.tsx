@@ -16,7 +16,6 @@ const ThemeAndLanguageScreen = () => {
   const { i18n } = useTranslation();
   const { t } = useTranslation();
 
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [language, setLanguage] = useState<LANGUAGE>('vi');
 
   useEffect(() => {
